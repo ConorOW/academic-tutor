@@ -1,0 +1,103 @@
+ACADEMIC TUTOR — USAGE GUIDE
+============================
+
+A personal learning system that reads your PDFs, generates open-recall
+questions (Make It Stick principles), quizzes you interactively, tracks
+your progress in a local database, and syncs cards to Anki.
+
+
+SETUP (first time only)
+-----------------------
+  conda create -n academic-tutor python=3.11 -y
+  conda activate academic-tutor
+  cd ~/Desktop/Academic-tutor
+  pip install -r requirements.txt
+
+
+EVERY SESSION
+-------------
+  conda activate academic-tutor
+  cd ~/Desktop/Academic-tutor
+
+
+COMMANDS
+--------
+
+1. INGEST A PDF
+   Reads a PDF, extracts key concepts, generates open-recall questions,
+   and saves everything to the local database.
+
+   python main.py ingest pdfs/yourfile.pdf
+
+   Options:
+     -n 15    Generate 15 questions instead of the default 10
+
+   Example:
+   python main.py ingest pdfs/lazebnik_2002.pdf -n 15
+
+   Drop PDFs in the pdfs/ folder for convenience, or provide any path.
+
+
+2. QUIZ
+   Starts an interactive quiz session. Shows a picker so you can choose
+   which PDF to study, or quiz across everything you've ingested.
+
+   python main.py quiz
+
+   What happens:
+   - You see a numbered list of your PDFs (plus an "All" option)
+   - Type the number and press Enter
+   - Questions appear one at a time, prioritised by what you struggle with
+   - Type your answer freely, press Enter twice to submit
+   - Claude scores your answer 0-10 with detailed feedback
+   - Your score, feedback, and Anki ease rating are saved to the database
+
+   Options:
+     --limit 10    Only ask 10 questions this session (default 20)
+
+
+3. SOURCES
+   Lists all PDFs you've ingested, with question counts and ingest dates.
+
+   python main.py sources
+
+
+4. STATS
+   Shows your overall performance and the 5 questions you struggle with most.
+
+   python main.py stats
+
+
+5. SYNC TO ANKI
+   Pushes all questions to Anki as Basic cards in the "Academic Tutor" deck.
+   Requires Anki to be open with the AnkiConnect add-on installed (port 8765).
+
+   python main.py sync
+
+   Options:
+     --ratings    Also tag Anki notes with your latest performance rating
+                  (tutor::again / tutor::hard / tutor::good / tutor::easy)
+
+
+6. RESET
+   Wipes the database completely and starts fresh. Useful during prototyping.
+
+   python main.py reset          # asks for confirmation
+   python main.py reset --yes    # skips confirmation
+
+
+HOW PROGRESS IS TRACKED
+------------------------
+  - Every answer is stored with your text, score, feedback, and timestamp
+  - Each question tracks times_asked and times_correct
+  - The quiz prioritises questions you struggle with (lowest accuracy first)
+  - New questions always appear near the top until you've attempted them
+  - Run `stats` any time to see where you need the most work
+
+
+FILES
+-----
+  pdfs/          Drop your PDFs here
+  data/tutor.db  SQLite database — all your progress lives here
+  src/           Source code (database, ingestion, quiz, anki)
+  config.py      Settings (Anki deck name, default question count, etc.)

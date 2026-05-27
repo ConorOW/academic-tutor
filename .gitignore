@@ -1,0 +1,19 @@
+# Database — personal progress data, not for version control
+data/
+
+# PDFs — usually copyrighted, keep them local
+pdfs/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+
+# macOS
+.DS_Store
+
+# Editors
+.vscode/
+.idea/
+*.swp
